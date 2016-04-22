@@ -78,7 +78,12 @@ func (p *TSPParser) ParseFile(path string) {
 					weights := strings.Fields(inner_line)
 					for _, w := range weights {
 						if f == c {
-							p.Data.Weights[f][c] = 0.0
+							if p.Data.Type == "ATSP" {
+								p.Data.Weights[f][c] = 0.0
+							} else {
+								pF, _ := strconv.ParseFloat(w, 64)
+								p.Data.Weights[f][c] = float32(pF)
+							}
 						} else {
 							pF, _ := strconv.ParseFloat(w, 64)
 							p.Data.Weights[f][c] = float32(pF)

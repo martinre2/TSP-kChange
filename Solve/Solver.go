@@ -1,6 +1,7 @@
 package Solve
 
 import (
+	_ "fmt"
 	p "github.com/martinre2/TSP-kChange/Parse"
 	"math/rand"
 	"time"
@@ -65,21 +66,27 @@ func (s *Solver) Change(tour []int, problem_indx int) []int {
 }
 
 func (s *Solver) TwoChange(tour []int) []int {
+	//fmt.Println(tour)
 	changeTour := make([]int, len(tour))
 	var i, k int
 	for {
-		i = rand.Intn(len(tour) - 1)
-		k = rand.Intn(len(tour) - 1)
-		if i != k && i < k {
+		t := time.Now()
+		rand.Seed(int64(t.Nanosecond()))
+		i = rand.Intn(len(tour))
+		k = rand.Intn(len(tour))
+		if i != k &&
+			i < k &&
+			(k-i) > 1 {
 			break
 		}
 	}
+	//fmt.Println(i, k)
 
 	copy(changeTour[0:i], tour[0:i])
 	revTour := reverseInts(tour[i:k])
 	copy(changeTour[i:k], revTour)
 	copy(changeTour[k:len(changeTour)], tour[k:len(tour)])
-
+	//fmt.Println(changeTour)
 	return changeTour
 }
 
@@ -87,9 +94,11 @@ func (s *Solver) ThreeChange(tour []int) []int {
 	changeTour := make([]int, len(tour))
 	var i, k, j int
 	for {
-		i = rand.Intn(len(tour) - 1)
-		k = rand.Intn(len(tour) - 1)
-		j = rand.Intn(len(tour) - 1)
+		t := time.Now()
+		rand.Seed(int64(t.Nanosecond()))
+		i = rand.Intn(len(tour))
+		k = rand.Intn(len(tour))
+		j = rand.Intn(len(tour))
 		if (i != k) && (k != j) && (i < k) && (k < j) {
 			break
 		}

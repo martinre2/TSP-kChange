@@ -12,9 +12,12 @@ func main() {
 
 	var problems []*p.TSPParser
 
-	parser := new(p.TSPParser)
-	parser.ParseFile("./tsp/ftv33.txt")
-	problems = append(problems, parser)
+	parser10 := new(p.TSPParser)
+	parser10.ParseFile("./tsp/burma14.txt")
+	problems = append(problems, parser10)
+	parser11 := new(p.TSPParser)
+	parser11.ParseFile("./tsp/bays29.txt")
+	problems = append(problems, parser11)
 	parser2 := new(p.TSPParser)
 	parser2.ParseFile("./tsp/ftv33.txt")
 	problems = append(problems, parser2)
@@ -40,20 +43,24 @@ func main() {
 	parser9.ParseFile("./tsp/ftv70.txt")
 	problems = append(problems, parser9)
 
-	solver := s.NewSolver(problems, 30, 3)
+	solver := s.NewSolver(problems, 100000, 2)
 	var best, worts float32
-	fmt.Println("Problema", "\t", "Nombre", "\t", "Ciudades", "\t", "Iteraciones", "\t", "Tiempo", "\t", "# Best", "\t", "Best", "\t", "Worts", "\t", "Optimo")
+	fmt.Println("Problema", "\t", "Nombre", "\t", "Ciudades", "\t", "Iteraciones", "\t", "Tiempo", "\t", "T. Prom.", "\t", "# Best", "\t", "Best", "\t", "Worts", "\t", "Optimo")
 	for i, p := range problems {
 		start_process := time.Now()
 
-		tour := solver.RandTour(i)
+		init_tour := solver.RandTour(i)
+		tour := make([]int, len(init_tour))
+		copy(tour, init_tour)
 		best = 9999999999
 		worts = 0.0
 		best_find := 0
+
 		for it := solver.MaxIter; it > 0; it-- {
 			weight := solver.CalcWeights(i, tour)
 
 			if weight < best {
+				//fmt.Println("It.", it, "Best.", best)
 				best = weight
 			}
 			if weight > worts {
@@ -62,11 +69,10 @@ func main() {
 			if weight == float32(p.Data.BestKnow) {
 				best_find++
 			}
-
 			tour = solver.Change(tour, i)
 		}
 		end_process := time.Now()
-		fmt.Println(i, "\t", p.Data.Name, "\t", p.Data.Dimension, "\t", solver.MaxIter, "\t", end_process.Sub(start_process), "\t", best_find, "\t", best, "\t", worts, "\t", p.Data.BestKnow)
+		fmt.Println(i, "\t", p.Data.Name, "\t", p.Data.Dimension, "\t", solver.MaxIter, "\t", end_process.Sub(start_process), "\t", end_process.Sub(start_process)/time.Duration(solver.MaxIter), "\t", best_find, "\t", best, "\t", worts, "\t", p.Data.BestKnow)
 	}
 
 }
